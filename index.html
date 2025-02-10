@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Background Removal</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0a192f; /* Dark blue background */
+            color: #ccd6f6; /* Light text color */
+            line-height: 1.6;
+        }
+
+        a {
+            color: #64ffda; /* Teal accent color */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #112240; /* Darker blue for header */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #64ffda; /* Teal accent color */
+        }
+
+        header nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        header nav a {
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #ffffff; /* White on hover */
+        }
+
+        /* Main Content Styles */
+        .container {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #64ffda; /* Teal accent color */
+        }
+
+        .container p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        input[type="file"] {
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border: 2px solid #64ffda;
+            border-radius: 5px;
+            background-color: transparent;
+            color: #ccd6f6;
+        }
+
+        button {
+            background-color: #64ffda; /* Teal accent color */
+            color: #0a192f; /* Dark blue text */
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #52d1b2; /* Slightly darker teal on hover */
+        }
+
+        #result {
+            margin-top: 2rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #result video {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #112240; /* Darker blue for footer */
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #64ffda; /* Teal accent color */
+        }
+
+        .pricing-plans {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .plan {
+            background-color: #233554; /* Dark blue for plan cards */
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 200px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .plan:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .plan h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #64ffda; /* Teal accent color */
+        }
+
+        .plan p {
+            font-size: 1rem;
+            color: #ccd6f6;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>VideoBGRemover</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Pricing</a>
+            <a href="#">Blog</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Video Background Removal</h1>
+        <p>Upload your video to remove the background seamlessly.</p>
+        <input type="file" id="videoUpload" accept="video/*">
+        <button id="removeBackground">Remove Background</button>
+        <div id="result"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <h2>Pricing Plans</h2>
+        <div class="pricing-plans">
+            <div class="plan">
+                <h3>$0 Plan</h3>
+                <p>Basic features for free.</p>
+            </div>
+            <div class="plan">
+                <h3>$10 Plan</h3>
+                <p>Advanced features for professionals.</p>
+            </div>
+            <div class="plan">
+                <h3>$20 Plan</h3>
+                <p>Premium features for businesses.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('removeBackground').addEventListener('click', function() {
+            const fileInput = document.getElementById('videoUpload');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('https://api.unscreen.com/v1/videos', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer 1Lhcb3yBiesn46hnrt4SKATC' // Replace with your API key
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if (data.url) {
+                        resultDiv.innerHTML = `<video controls src="${data.url}" style="max-width: 100%;"></video>`;
+                    } else {
+                        resultDiv.innerHTML = '<p>Error processing video. Please try again.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = '<p>Error processing video. Please try again.</p>';
+                });
+            } else {
+                alert('Please upload a video file first.');
+            }
+        });
+    </script>
+</body>
+</html>
+
